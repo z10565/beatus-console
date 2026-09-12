@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -41,7 +42,10 @@ export default async function ClientDetailPage({
 
   if (!client) notFound();
 
-  const lastSpecialistSession = client.sessions.find((s) => s.status !== "cancelled");
+  type SessionWithSpecialist = Prisma.SessionGetPayload<{ include: { specialist: true } }>;
+  const lastSpecialistSession = client.sessions.find(
+    (s: SessionWithSpecialist) => s.status !== "cancelled"
+  );
   const equipmentLineItems = client.invoices.flatMap((inv) =>
     inv.lineItems.filter((li) => li.type === "equipment").map((li) => ({ ...li, invoice: inv }))
   );
