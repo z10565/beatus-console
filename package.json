@@ -5,7 +5,8 @@
   "scripts": {
     "predev": "lsof -ti tcp:3000 | xargs kill -9 2>/dev/null || true",
     "dev": "next dev",
-    "build": "next build",
+    "postinstall": "prisma generate",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx prisma/seed.ts"
